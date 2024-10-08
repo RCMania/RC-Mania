@@ -1,18 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class CarController : MonoBehaviour
+public class CarController : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    [Header("References")]
+    [SerializeField] private WheelCollider[] wheelColliders = new WheelCollider[4];
+    [SerializeField] private GameObject[] wheelMeshes = new GameObject[4];
+
+
+    private float driveInput = 0f;
+    private float steerInput = 0f;
+
+
+    private void FixedUpdate() {
+
+        Inputs();
+        FWDrive();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void Inputs() {
+
+        driveInput = Input.GetAxis("Vertical");
+        steerInput = Input.GetAxis("Horizontal");
     }
+
+    private void FWDrive() {
+
+    }
+   
 }
