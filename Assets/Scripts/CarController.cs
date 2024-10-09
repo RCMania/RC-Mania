@@ -26,6 +26,7 @@ public class CarController : NetworkBehaviour
     [SerializeField] WheelCollider[] wheelColliders = new WheelCollider[4];
     [SerializeField] GameObject[] wheelMeshes = new GameObject[4];
     [SerializeField] private Rigidbody rb;
+    [SerializeField] private GameObject centerOfMass;
 
     [Header("Car Settings")]
     [SerializeField] float wheelBase = 2.55f; // in metters
@@ -50,10 +51,14 @@ public class CarController : NetworkBehaviour
 
     #region client
 
-    private void OnStartClient()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        centerOfMass = GameObject.Find("Mass");
+
+        rb.centerOfMass = centerOfMass.transform.localPosition;
     }
+
 
     private void FixedUpdate() {
 
