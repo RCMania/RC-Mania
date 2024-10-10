@@ -776,6 +776,7 @@ GameObject:
   - component: {fileID: 6523791861464164718}
   - component: {fileID: 6523791861464164704}
   - component: {fileID: 6523791861464164706}
+  - component: {fileID: 8155125172153334156}
   - component: {fileID: 5963464644570535167}
   - component: {fileID: 773087278}
   m_Layer: 0
@@ -863,6 +864,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &8155125172153334156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6523791861463676237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &5963464644570535167
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -900,6 +913,7 @@ MonoBehaviour:
   - {fileID: 6523791861463676229}
   - {fileID: 6523791861463676227}
   rb: {fileID: 0}
+  centerOfMass: {fileID: 0}
   wheelBase: 2.55
   rearTrack: 1.5
   downForce: 50

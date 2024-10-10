@@ -59,12 +59,18 @@ public class CarController : NetworkBehaviour
         rb.centerOfMass = centerOfMass.transform.localPosition;
     }
 
+    private void Update()
+    {
+        if (!IsOwner) { return; }
 
-    private void FixedUpdate() {
+        Inputs();
+    }
 
+
+    private void FixedUpdate() 
+    {
         if (!IsOwner) { return; }
         
-        Inputs();
         DriveServerRpc(driveInput, steerInput);
         AddDownForceServerRpc(); // for better car grip
     }
@@ -104,17 +110,9 @@ public class CarController : NetworkBehaviour
     private void AddDownForceServerRpc()
     {
         rb.AddForce(-transform.up * downForce * rb.velocity.magnitude);
-
-        SyncRigidbodyStateClientRpc(rb.position, rb.rotation);
     }
 
-    [ClientRpc]
-    private void SyncRigidbodyStateClientRpc(Vector3 position, Quaternion rotation)
-    {
-        // Update clients' Rigidbody position and rotation to match the server's
-        rb.position = position;
-        rb.rotation = rotation;
-    }
+    
 
     private void FrontWheelDrive(float driveInput)
     {
@@ -134,13 +132,15 @@ public class CarController : NetworkBehaviour
 
         if (steerInput > 0) 
         {
-            wheelColliders[0].steerAngle = innerWheelAngle;
-            wheelColliders[1].steerAngle = outterWheelAngle;
+            // Left wheel is outer, right wheel is inner
+            wheelColliders[0].steerAngle = outterWheelAngle;
+            wheelColliders[1].steerAngle = innerWheelAngle;
         }
         else if (steerInput < 0)
         {
-            wheelColliders[0].steerAngle = outterWheelAngle;
-            wheelColliders[1].steerAngle = innerWheelAngle;
+            // Left wheel is inner, right wheel is outer
+            wheelColliders[0].steerAngle = innerWheelAngle;
+            wheelColliders[1].steerAngle = outterWheelAngle;
         }
         else
         {
