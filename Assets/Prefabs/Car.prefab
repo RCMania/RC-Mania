@@ -917,7 +917,12 @@ MonoBehaviour:
   wheelBase: 2.55
   rearTrack: 1.5
   downForce: 50
-  motorForce: 500
+  motorForce: 1000
+  brakeForce: 1000
+  forwardFactor: 5
+  backwardsFactor: 3
+  maxForwardsSpeed: 180
+  maxBackwardsSpeed: 60
   baseTurnRadius: 7.5
 --- !u!1 &6523791861463676239
 GameObject:

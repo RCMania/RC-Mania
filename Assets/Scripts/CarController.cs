@@ -6,21 +6,10 @@ using UnityEngine;
 
 public class CarController : NetworkBehaviour
 {
-    #region utils
-
-    internal enum DriveType
-    {
-        frontWheelDrive,
-        rearWheelDrive,
-        fourWheelDrive
-    }
-
-    #endregion
-
     #region variables
 
     [Header("DriveType")]
-    [SerializeField] DriveType driveType;
+    [SerializeField] DriveSystem.DriveType driveType;
 
     [Header("References")]
     [SerializeField] WheelCollider[] wheelColliders = new WheelCollider[4];
@@ -29,23 +18,23 @@ public class CarController : NetworkBehaviour
     [SerializeField] private GameObject centerOfMass;
 
     [Header("Car Settings")]
-    [SerializeField] float wheelBase = 2.55f; // in metters
-    [SerializeField] float rearTrack = 1.5f; // in metters
+    [SerializeField] float wheelBase = 2.55f;
+    [SerializeField] float rearTrack = 1.5f;
     [SerializeField] float downForce = 50f;
 
-    [Header("Drive Settings")]
-    [SerializeField] float motorForce = 500f;
+    [Header("Drive and Steer Settings")]
+    [SerializeField] float motorForce = 1000f;
+    [SerializeField] float brakeForce = 1000f;
+    [SerializeField] float forwardFactor = 5f;
+    [SerializeField] float backwardsFactor = 3f;
+    [SerializeField] float maxForwardsSpeed = 180;
+    [SerializeField] float maxBackwardsSpeed = 60;
 
-    [Header("Steer Settings")]
-    [SerializeField] float baseTurnRadius = 7.5f;
-    private float currentTurnRadius;
-
-    [Header("Inputs")]
     private float driveInput = 0f;
     private float steerInput = 0f;
 
-
-    private float KPH = 0f; // ?? where to calc it in user/server space. ( = rb.velocity.mangitude * 3.6 )
+    private DriveSystem driveSystem;
+    private SteerSystem steeringSystem;
 
     #endregion
 
@@ -55,55 +44,52 @@ public class CarController : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody>();
         centerOfMass = GameObject.Find("Mass");
-
         rb.centerOfMass = centerOfMass.transform.localPosition;
+
+        // Initialize systems
+        driveSystem = new DriveSystem(driveType, wheelColliders, motorForce, brakeForce);
+        steeringSystem = new SteerSystem(wheelColliders, wheelBase, rearTrack);
     }
 
     private void Update()
     {
-        if (!IsOwner) { return; }
+        if (!IsOwner) return;
 
         Inputs();
     }
 
-
-    private void FixedUpdate() 
+    private void FixedUpdate()
     {
-        if (!IsOwner) { return; }
-        
+        if (!IsOwner) return;
+
         DriveServerRpc(driveInput, steerInput);
-        AddDownForceServerRpc(); // for better car grip
+        AddDownForceServerRpc();
     }
 
-    private void Inputs() {
-
+    private void Inputs()
+    {
         driveInput = Input.GetAxis("Vertical");
         steerInput = Input.GetAxis("Horizontal");
     }
 
     #endregion
 
-
     #region server
 
     [ServerRpc]
     private void DriveServerRpc(float driveInput, float steerInput)
     {
-
-        if (driveType == DriveType.frontWheelDrive)
+        if (Mathf.Abs(driveInput) > 0.1f)
         {
-            FrontWheelDrive(driveInput);
-        } 
-        else if (driveType == DriveType.rearWheelDrive)
-        {
-            // ++add RWDrive
+            Debug.Log("car controller Drive");
+            driveSystem.Drive(driveInput);
         }
         else
         {
-            // ++add FourWDrive
+            driveSystem.Brake();
         }
 
-        AckermanSteering(steerInput);
+        steeringSystem.AckermanSteering(steerInput);
     }
 
     [ServerRpc]
@@ -112,42 +98,5 @@ public class CarController : NetworkBehaviour
         rb.AddForce(-transform.up * downForce * rb.velocity.magnitude);
     }
 
-    
-
-    private void FrontWheelDrive(float driveInput)
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            wheelColliders[i].motorTorque = motorForce * driveInput;
-        }
-    }
-
-    private void AckermanSteering(float steerInput)
-    {
-        // ++ change the turn radius based on the car speed;
-        currentTurnRadius = baseTurnRadius;
-
-        float innerWheelAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (currentTurnRadius + (rearTrack / 2))) * steerInput;
-        float outterWheelAngle = Mathf.Rad2Deg * Mathf.Atan(wheelBase / (currentTurnRadius - (rearTrack / 2))) * steerInput;
-
-        if (steerInput > 0) 
-        {
-            // Left wheel is outer, right wheel is inner
-            wheelColliders[0].steerAngle = outterWheelAngle;
-            wheelColliders[1].steerAngle = innerWheelAngle;
-        }
-        else if (steerInput < 0)
-        {
-            // Left wheel is inner, right wheel is outer
-            wheelColliders[0].steerAngle = innerWheelAngle;
-            wheelColliders[1].steerAngle = outterWheelAngle;
-        }
-        else
-        {
-            wheelColliders[0].steerAngle = 0;
-            wheelColliders[1].steerAngle = 0;
-        }
-
-    }
     #endregion
 }
