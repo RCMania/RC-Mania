@@ -25,10 +25,13 @@ public class CarController : NetworkBehaviour
     [Header("Drive and Steer Settings")]
     [SerializeField] float motorForce = 1000f;
     [SerializeField] float brakeForce = 1000f;
-    [SerializeField] float forwardFactor = 5f;
-    [SerializeField] float backwardsFactor = 3f;
+    [SerializeField] float fastBrakeMultiplier = 2.5f;
+    [SerializeField] float forwardMultiplier = 5f;
+    [SerializeField] float backwardsMultiplier = 3f;
     [SerializeField] float maxForwardsSpeed = 180;
     [SerializeField] float maxBackwardsSpeed = 60;
+    private NetworkVariable<float> KPH = new NetworkVariable<float>();
+    private NetworkVariable<float> movingDirection = new NetworkVariable<float>();
 
     private float driveInput = 0f;
     private float steerInput = 0f;
@@ -60,7 +63,7 @@ public class CarController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!IsOwner) return;
+        if (!IsOwner) return;  
 
         DriveServerRpc(driveInput, steerInput);
         AddDownForceServerRpc();
@@ -79,10 +82,21 @@ public class CarController : NetworkBehaviour
     [ServerRpc]
     private void DriveServerRpc(float driveInput, float steerInput)
     {
-        if (Mathf.Abs(driveInput) > 0.1f)
+        Debug.Log("DriveServerRpc");
+        movingDirection.Value = transform.InverseTransformDirection(rb.velocity).z;
+        KPH.Value = rb.velocity.magnitude * 3.6f;
+
+        if ((movingDirection.Value < -0.2f && driveInput > 0.1f) || (movingDirection.Value > 0.2f && driveInput < -0.1f))
         {
-            Debug.Log("car controller Drive");
-            driveSystem.Drive(driveInput);
+            driveSystem.FastBrake(fastBrakeMultiplier * brakeForce);
+        }
+        else if (driveInput > 0 && KPH.Value < maxForwardsSpeed)
+        {
+            driveSystem.Drive(driveInput, forwardMultiplier);
+        }
+        else if (driveInput < 0 && KPH.Value < maxBackwardsSpeed)
+        {
+            driveSystem.Drive(driveInput, backwardsMultiplier);
         }
         else
         {
