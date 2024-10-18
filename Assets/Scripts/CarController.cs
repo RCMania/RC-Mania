@@ -50,7 +50,7 @@ public class CarController : NetworkBehaviour
         rb.centerOfMass = centerOfMass.transform.localPosition;
 
         // Initialize systems
-        driveSystem = new DriveSystem(driveType, wheelColliders, motorForce, brakeForce);
+        driveSystem = new DriveSystem(driveType, wheelColliders, motorForce, brakeForce, rb);
         steeringSystem = new SteerSystem(wheelColliders, wheelBase, rearTrack);
     }
 
@@ -82,7 +82,7 @@ public class CarController : NetworkBehaviour
     [ServerRpc]
     private void DriveServerRpc(float driveInput, float steerInput)
     {
-        Debug.Log("DriveServerRpc");
+        //Debug.Log("DriveServerRpc");
         movingDirection.Value = transform.InverseTransformDirection(rb.velocity).z;
         KPH.Value = rb.velocity.magnitude * 3.6f;
 
@@ -99,7 +99,7 @@ public class CarController : NetworkBehaviour
             driveSystem.Drive(driveInput, backwardsMultiplier);
         }
         else
-        {
+        {   
             driveSystem.Brake();
         }
 
