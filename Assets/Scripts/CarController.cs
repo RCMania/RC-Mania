@@ -79,6 +79,16 @@ public class CarController : NetworkBehaviour
         steerInput = Input.GetAxis("Horizontal");
     }
 
+    public float GetKPH()
+    {
+        return KPH.Value;
+    }
+
+    public float GetMaxForwardSpeed()
+    {
+        return maxForwardsSpeed;
+    }
+
     #endregion
 
     #region server
