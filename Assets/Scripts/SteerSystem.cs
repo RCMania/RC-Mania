@@ -8,13 +8,14 @@ public class SteerSystem
     private float wheelBase;
     private float rearTrack;
     private float currentTurnRadius;
-    private float baseTurnRadius = 7.5f;
+    private float baseTurnRadius;
 
-    public SteerSystem(WheelCollider[] wheelColliders, float wheelBase, float rearTrack)
+    public SteerSystem(WheelCollider[] wheelColliders, float wheelBase, float rearTrack, float baseTurnRadius)
     {
         this.wheelColliders = wheelColliders;
         this.wheelBase = wheelBase;
         this.rearTrack = rearTrack;
+        this.baseTurnRadius = baseTurnRadius;
     }
 
     public void AckermanSteering(float steerInput)

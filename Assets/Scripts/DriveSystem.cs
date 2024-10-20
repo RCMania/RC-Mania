@@ -88,11 +88,11 @@ public class DriveSystem
 
     public void Brake()
     {
-        Debug.Log("Drive System Brake");
+        //Debug.Log("Drive System Brake");
         foreach (WheelCollider wc in wheelColliders)
         {
-            wc.brakeTorque = brakeForce / numberOfWheels;
             wc.motorTorque = 0;
+            wc.brakeTorque = brakeForce / numberOfWheels;
         }
     }
 
@@ -102,8 +102,9 @@ public class DriveSystem
         
         foreach (WheelCollider wc in wheelColliders)
         {
-            wc.brakeTorque = _brakeForce / numberOfWheels;
+            Debug.Log("wheel" + wc.motorTorque);
             wc.motorTorque = 0;
+            wc.brakeTorque = _brakeForce / numberOfWheels;
         }
     }
    

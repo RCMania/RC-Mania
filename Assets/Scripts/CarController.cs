@@ -22,7 +22,7 @@ public class CarController : NetworkBehaviour
     [SerializeField] float rearTrack = 1.5f;
     [SerializeField] float downForce = 50f;
 
-    [Header("Drive and Steer Settings")]
+    [Header("Drive Settings")]
     [SerializeField] float motorForce = 1000f;
     [SerializeField] float brakeForce = 1000f;
     [SerializeField] float fastBrakeMultiplier = 2.5f;
@@ -32,6 +32,10 @@ public class CarController : NetworkBehaviour
     [SerializeField] float maxBackwardsSpeed = 60;
     private NetworkVariable<float> KPH = new NetworkVariable<float>();
     private NetworkVariable<float> movingDirection = new NetworkVariable<float>();
+
+    [Header("Steer Settings")]
+    [SerializeField] float baseTurnRadius = 7.5f;
+   
 
     private float driveInput = 0f;
     private float steerInput = 0f;
@@ -51,7 +55,7 @@ public class CarController : NetworkBehaviour
 
         // Initialize systems
         driveSystem = new DriveSystem(driveType, wheelColliders, motorForce, brakeForce, rb);
-        steeringSystem = new SteerSystem(wheelColliders, wheelBase, rearTrack);
+        steeringSystem = new SteerSystem(wheelColliders, wheelBase, rearTrack, baseTurnRadius);
     }
 
     private void Update()
