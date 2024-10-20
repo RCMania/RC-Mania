@@ -87,8 +87,8 @@ public class CarController : NetworkBehaviour
     private void DriveServerRpc(float driveInput, float steerInput)
     {
         //Debug.Log("DriveServerRpc");
-        movingDirection.Value = transform.InverseTransformDirection(rb.velocity).z;
-        KPH.Value = rb.velocity.magnitude * 3.6f;
+        movingDirection.Value = transform.InverseTransformDirection(rb.linearVelocity).z;
+        KPH.Value = rb.linearVelocity.magnitude * 3.6f;
 
         if ((movingDirection.Value < -0.2f && driveInput > 0.1f) || (movingDirection.Value > 0.2f && driveInput < -0.1f))
         {
@@ -113,7 +113,7 @@ public class CarController : NetworkBehaviour
     [ServerRpc]
     private void AddDownForceServerRpc()
     {
-        rb.AddForce(-transform.up * downForce * rb.velocity.magnitude);
+        rb.AddForce(-transform.up * downForce * rb.linearVelocity.magnitude);
     }
 
     #endregion
