@@ -80,7 +80,6 @@ public class CameraController : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Debug.Log(carController.GetKPH());
             cam.fieldOfView = Mathf.Lerp(minFOV, maxFOV, (carController.GetKPH() * fovSpeedChangeMultiplier) / carController.GetMaxForwardSpeed());
         }
     }

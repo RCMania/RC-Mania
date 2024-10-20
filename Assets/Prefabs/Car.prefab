@@ -417,6 +417,37 @@ Transform:
   - {fileID: 5817635668907233225}
   m_Father: {fileID: 3094771926779073153}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5962647775047293283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4496993652045526833}
+  m_Layer: 0
+  m_Name: RocketSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4496993652045526833
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5962647775047293283}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.43, z: 2.79}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6523791861464164717}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6523791861463676227
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,6 +894,7 @@ GameObject:
   - component: {fileID: 5963464644570535167}
   - component: {fileID: 773087278}
   - component: {fileID: 2819051672909923939}
+  - component: {fileID: 9077625076591571039}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -890,6 +922,7 @@ Transform:
   - {fileID: 1612967844071620659}
   - {fileID: 6066202224147179343}
   - {fileID: 3094771926779073153}
+  - {fileID: 4496993652045526833}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6523791861464164718
@@ -1058,11 +1091,26 @@ MonoBehaviour:
   cameraAnchor: {fileID: 253476090998279338}
   minAngle: -5
   maxAngle: 30
-  cameraSensitivity: 200
+  cameraSensitivity: 400
   minFOV: 60
   maxFOV: 90
   fovSpeedChangeMultiplier: 2
-  lockMouse: 1
+  lockMouse: 0
+--- !u!114 &9077625076591571039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6523791861463676237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2f523d97307bfe4c9b6f573a09c3023, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shootPoint: {fileID: 4496993652045526833}
+  rocketPrefab: {fileID: 4617317872741215528, guid: c64ea09196cfcbe459e5397777f4ac16, type: 3}
+  reloadTime: 1
 --- !u!1 &6523791861463676239
 GameObject:
   m_ObjectHideFlags: 0
