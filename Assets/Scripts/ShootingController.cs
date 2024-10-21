@@ -7,12 +7,12 @@ public class Shooting : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] Transform shootPoint;      
-    [SerializeField] GameObject rocketPrefab;
-    [SerializeField] List<GameObject> spawnedRockets = new List<GameObject>();
+    [SerializeField] GameObject projectilePrefab;
+    [SerializeField] List<GameObject> spawnedProjectiles = new List<GameObject>(); //SerializeField Only for Tests
 
     [Header("Shooting Settings")]
     [SerializeField] float reloadTime = 1f;
-    [SerializeField] private NetworkVariable<float> lastShootTime = new NetworkVariable<float>();
+    private NetworkVariable<float> lastShootTime = new NetworkVariable<float>();
 
     private void Start()
     {
@@ -39,23 +39,23 @@ public class Shooting : NetworkBehaviour
 
         lastShootTime.Value = Time.time;  // Update the last shot time
 
-        SpawnRocket();
+        SpawnProjectile();
     }
     
-    private void SpawnRocket()
+    private void SpawnProjectile()
     {
-        GameObject rocketInstance = Instantiate(rocketPrefab, shootPoint.position, shootPoint.rotation);
-        spawnedRockets.Add(rocketInstance);
-        
-        rocketInstance.GetComponent<NetworkObject>().Spawn();
+        GameObject _projectileInstance = Instantiate(projectilePrefab, shootPoint.position, shootPoint.rotation);
+        spawnedProjectiles.Add(_projectileInstance);
+
+        _projectileInstance.GetComponent<NetworkObject>().Spawn();
     }
 
     [ServerRpc] //(RequireOwnership = false)
     public void DestroyServerRpc()
     {
-        //GameObject _toDestroy = spawnedRockets[0]; (by not 0 maybe with an id but for later fix)
+        //GameObject _toDestroy = spawnedProjectiles[0]; (not 0 maybe with an id but for later fix)
         // _toDestroy.GetComponent<NetworkObject>().DeSpawn();
-        //spawnedRockets.Remove(_toDestroy);
+        //spawnedProjectiles.Remove(_toDestroy);
         //Destroy(_toDestroy);
 
     }

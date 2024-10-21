@@ -679,7 +679,7 @@ Transform:
   m_GameObject: {fileID: 5962647775047293283}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.43, z: 2.79}
+  m_LocalPosition: {x: 0, y: 0.68, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1176,7 +1176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3307653528
+  GlobalObjectIdHash: 13110630
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1348,11 +1348,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootPoint: {fileID: 4496993652045526833}
-  rocketPrefab: {fileID: 4617317872741215528, guid: c64ea09196cfcbe459e5397777f4ac16, type: 3}
-  spawnedRockets: []
-  reloadTime: 10
-  lastShootTime:
-    m_InternalValue: 0
+  projectilePrefab: {fileID: 4617317872741215528, guid: c64ea09196cfcbe459e5397777f4ac16, type: 3}
+  spawnedProjectiles: []
+  reloadTime: 1
 --- !u!1 &6523791861463676239
 GameObject:
   m_ObjectHideFlags: 0
