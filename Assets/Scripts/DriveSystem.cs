@@ -39,7 +39,7 @@ public class DriveSystem
 
     public void Drive(float driveInput, float directionMultiplier)
     {
-        Debug.Log("Drive System Drive");
+        //Debug.Log("Drive System Drive");
         foreach (WheelCollider wc in wheelColliders)
         {
             wc.brakeTorque = 0;
@@ -70,7 +70,7 @@ public class DriveSystem
 
     private void RearWheelDrive(float driveInput, float directionMultiplier)
     {
-        Debug.Log("Drive System RWD");
+        //Debug.Log("Drive System RWD");
         for (int i = 2; i < 4; i++)
         {
             wheelColliders[i].motorTorque = (motorForce * directionMultiplier * driveInput) / numberOfWheels;
@@ -79,7 +79,7 @@ public class DriveSystem
 
     private void FourWheelDrive(float driveInput, float directionMultiplier)
     {
-        Debug.Log("Drive System FourWD");
+        //Debug.Log("Drive System FourWD");
         for (int i = 0; i < 4; i++)
         {
             wheelColliders[i].motorTorque = (motorForce * directionMultiplier * driveInput) / numberOfWheels;
@@ -98,11 +98,11 @@ public class DriveSystem
 
     public void FastBrake(float _brakeForce)
     {
-        Debug.Log("Drive System Fast Brake");
+        //Debug.Log("Drive System Fast Brake");
         
         foreach (WheelCollider wc in wheelColliders)
         {
-            Debug.Log("wheel" + wc.motorTorque);
+            //Debug.Log("wheel" + wc.motorTorque);
             wc.motorTorque = 0;
             wc.brakeTorque = _brakeForce / numberOfWheels;
         }

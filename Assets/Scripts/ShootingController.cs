@@ -7,15 +7,16 @@ public class Shooting : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] Transform shootPoint;      
-    [SerializeField] GameObject rocketPrefab;   
+    [SerializeField] GameObject rocketPrefab;
+    [SerializeField] List<GameObject> spawnedRockets = new List<GameObject>();
 
     [Header("Shooting Settings")]
     [SerializeField] float reloadTime = 1f;
-    private NetworkVariable<float> lastShootTime = new NetworkVariable<float>();
+    [SerializeField] private NetworkVariable<float> lastShootTime = new NetworkVariable<float>();
 
     private void Start()
     {
-        if (IsOwner) 
+        if (IsServer)
         {
             lastShootTime.Value = Time.time;
         }
@@ -23,7 +24,7 @@ public class Shooting : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner) return;
+        if (!IsOwner) { return; }
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -31,32 +32,32 @@ public class Shooting : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = true)]
+    [ServerRpc] 
     private void ShootServerRpc()
     {
-        if (Time.time < (lastShootTime.Value + reloadTime)) return;  // Prevent shooting before reload time
+        if (Time.time < (lastShootTime.Value + reloadTime)) { return; }  // Prevent shooting before reload time
 
         lastShootTime.Value = Time.time;  // Update the last shot time
 
-        SpawnRocketServerRpc();
+        SpawnRocket();
     }
-
-    [ServerRpc(RequireOwnership = true)]
-    private void SpawnRocketServerRpc()
+    
+    private void SpawnRocket()
     {
         GameObject rocketInstance = Instantiate(rocketPrefab, shootPoint.position, shootPoint.rotation);
+        spawnedRockets.Add(rocketInstance);
+        
         rocketInstance.GetComponent<NetworkObject>().Spawn();
-
-        // Optionally, you could return this information to the client
-        SpawnRocketClientRpc();
     }
 
-    [ClientRpc]
-    private void SpawnRocketClientRpc()
+    [ServerRpc] //(RequireOwnership = false)
+    public void DestroyServerRpc()
     {
-        if (IsOwner) return;  // Ensure the local owner doesn't do this again (redundant check)
+        //GameObject _toDestroy = spawnedRockets[0]; (by not 0 maybe with an id but for later fix)
+        // _toDestroy.GetComponent<NetworkObject>().DeSpawn();
+        //spawnedRockets.Remove(_toDestroy);
+        //Destroy(_toDestroy);
 
-        // You can handle client-specific logic here (e.g., visual effects, sounds)
-        // Example: Play shoot sound effect or show an animation
     }
+
 }

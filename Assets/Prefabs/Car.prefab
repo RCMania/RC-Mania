@@ -1319,7 +1319,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6523791861463676237}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2392114120333db4abfefbd62ab56ad8, type: 3}
   m_Name: 
@@ -1349,7 +1349,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootPoint: {fileID: 4496993652045526833}
   rocketPrefab: {fileID: 4617317872741215528, guid: c64ea09196cfcbe459e5397777f4ac16, type: 3}
-  reloadTime: 1
+  spawnedRockets: []
+  reloadTime: 10
+  lastShootTime:
+    m_InternalValue: 0
 --- !u!1 &6523791861463676239
 GameObject:
   m_ObjectHideFlags: 0
