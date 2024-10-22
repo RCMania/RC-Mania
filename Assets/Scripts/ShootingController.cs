@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class Shooting : NetworkBehaviour
+public class ShootingController : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] Transform shootPoint;      
@@ -11,7 +11,7 @@ public class Shooting : NetworkBehaviour
     [SerializeField] List<GameObject> spawnedProjectiles = new List<GameObject>(); //SerializeField Only for Tests
 
     [Header("Shooting Settings")]
-    [SerializeField] float reloadTime = 1f;
+    [SerializeField] float reloadTime = 4f;
     private NetworkVariable<float> lastShootTime = new NetworkVariable<float>();
 
     private void Start()
@@ -45,19 +45,27 @@ public class Shooting : NetworkBehaviour
     private void SpawnProjectile()
     {
         GameObject _projectileInstance = Instantiate(projectilePrefab, shootPoint.position, shootPoint.rotation);
+        
         spawnedProjectiles.Add(_projectileInstance);
+
+        _projectileInstance.GetComponent<Projectile>().parent = this;
 
         _projectileInstance.GetComponent<NetworkObject>().Spawn();
     }
 
-    [ServerRpc] //(RequireOwnership = false)
-    public void DestroyServerRpc()
+    [ServerRpc(RequireOwnership = false)] 
+    public void DestroyServerRpc(NetworkObjectReference projectileReference)
     {
-        //GameObject _toDestroy = spawnedProjectiles[0]; (not 0 maybe with an id but for later fix)
-        // _toDestroy.GetComponent<NetworkObject>().DeSpawn();
-        //spawnedProjectiles.Remove(_toDestroy);
-        //Destroy(_toDestroy);
+        if (projectileReference.TryGet(out NetworkObject projectileNetworkObject))
+        {
+            var projectileInstance = projectileNetworkObject.gameObject;
 
+            // Ensure it is removed from the list before being destroyed
+            spawnedProjectiles.Remove(projectileInstance);
+
+            // Despawn and destroy the projectile
+            projectileNetworkObject.Despawn(true);
+            Destroy(projectileInstance);
+        }
     }
-
 }

@@ -139,11 +139,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
   SyncPositionX: 1
-  SyncPositionY: 0
+  SyncPositionY: 1
   SyncPositionZ: 1
-  SyncRotAngleX: 0
-  SyncRotAngleY: 0
-  SyncRotAngleZ: 0
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
@@ -216,6 +216,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67d201d3c71bab4fae6ee345c0b09a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parent: {fileID: 0}
   shootForce: 10
   explosionRadius: 3
-  lifeTime: 2
+  explosionDamage: 50
+  explosionForce: 20
+  lifeTime:
+    m_InternalValue: 2
