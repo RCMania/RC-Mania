@@ -85,7 +85,7 @@ public class Projectile : NetworkBehaviour
         if (!GetComponent<NetworkObject>().IsSpawned) { return; } 
         
         //rb.linearVelocity = transform.forward * shootForce;
-        rb.AddForce(transform.forward * shootForce);
+        rb.AddForce(transform.forward * shootForce, ForceMode.Impulse);
     }
 
     
