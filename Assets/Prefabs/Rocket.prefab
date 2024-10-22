@@ -217,9 +217,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
-  shootForce: 10
-  explosionRadius: 3
+  shootForce: 3
+  explosionRadius: 0.55
   explosionDamage: 50
   explosionForce: 20
-  lifeTime:
-    m_InternalValue: 2
+  lifeTime: 2

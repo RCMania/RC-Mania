@@ -30,38 +30,49 @@ public class Projectile : NetworkBehaviour
         MoveServerRpc();
     }
 
+    void OnDrawGizmos()
+    {
+        // Draw a wire sphere in the scene view for the explosion radius
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
+    }
+
     void Expload()
     {
         if (!IsOwner) { return; }
 
-        Debug.Log("Projectile: Expload");
+        //Debug.Log("Projectile: Expload");
         Collider[] _colliders = Physics.OverlapSphere(transform.position, explosionRadius);
 
-        foreach (Collider nearbyObjects in _colliders)
+        foreach (Collider nearbyObject in _colliders)
         {
-            /*Rigidbody rb = nearbyObjects.GetComponent<Rigidbody>();
-            HealthController hc = nearbyObjects.GetComponent<HealthController>();
+            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
+            HealthController hc = nearbyObject.GetComponent<HealthController>();
            
-            AddForce(rb);
-            DamageObject(hc, CalculateDamage());*/
+            // ++ AddForce(rb);
+            DamageObject(hc, CalculateDamage(nearbyObject));
         }
         parent.DestroyServerRpc(GetComponent<NetworkObject>());
     }
 
-    /*void AddForce(Rigidbody rb)
+  
+    private float CalculateDamage(Collider target)
     {
-        if (rb == null) {  return; }
-    }
+        Vector3 closestPoint = target.ClosestPoint(transform.position);
 
-    void CalculateDamage()
-    {
+        float distance = Vector3.Distance(transform.position, closestPoint);
 
+        float damage = explosionDamage * (1 - (distance / explosionRadius));
+
+        //Debug.Log("Collided With:" + target.name + "Distance from explosion: " + distance + " Damage dealt: " + damage);
+
+        return Mathf.Max(damage, 0);
     }
 
     void DamageObject(HealthController hp, float amountOfDamage)
     {
         if (hp == null) { return; }
-    }*/
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -71,7 +82,8 @@ public class Projectile : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void MoveServerRpc()
     {
-        if (!GetComponent<NetworkObject>().IsSpawned) { return; } // Ensure it's spawned
+        if (!GetComponent<NetworkObject>().IsSpawned) { return; } 
+        
         //rb.linearVelocity = transform.forward * shootForce;
         rb.AddForce(transform.forward * shootForce);
     }

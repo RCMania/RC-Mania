@@ -45,12 +45,13 @@ public class ShootingController : NetworkBehaviour
     private void SpawnProjectile()
     {
         GameObject _projectileInstance = Instantiate(projectilePrefab, shootPoint.position, shootPoint.rotation);
-        
+        _projectileInstance.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId, true);
+
+
         spawnedProjectiles.Add(_projectileInstance);
 
         _projectileInstance.GetComponent<Projectile>().parent = this;
 
-        _projectileInstance.GetComponent<NetworkObject>().Spawn();
     }
 
     [ServerRpc(RequireOwnership = false)] 
