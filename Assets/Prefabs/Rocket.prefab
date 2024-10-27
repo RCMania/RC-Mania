@@ -217,8 +217,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
-  shootForce: 3
+  shootForce: 0.3
   explosionRadius: 0.55
   explosionDamage: 50
   explosionForce: 20
-  lifeTime: 2
+  lifeTime: 1

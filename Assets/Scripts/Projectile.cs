@@ -8,85 +8,96 @@ public class Projectile : NetworkBehaviour
     private Rigidbody rb;
 
     [Header("Projectile Settings")]
-    [SerializeField] float shootForce = 10f;
+    [SerializeField] float shootForce = 7f;
     [SerializeField] float explosionRadius = 3f;
-    [SerializeField] float explosionDamage = 50f;
-    [SerializeField] float explosionForce = 20f;
+    [SerializeField] float explosionDamage = 66f;
+    [SerializeField] float explosionForce = 2f;
     [SerializeField] float lifeTime = 2f;
 
-    void Start()
+    private void Start()
     {
+        rb = GetComponent<Rigidbody>();
+
+        // Apply the shooting force if we are the server
         if (IsServer)
         {
+            rb.AddForce(transform.forward * shootForce, ForceMode.Impulse);
             Invoke(nameof(Expload), lifeTime);
         }
-
-        rb = GetComponent<Rigidbody>();
+        else
+        {
+            rb.isKinematic = true;  // Disable physics on the client to avoid conflicts
+        }
     }
 
-
-    void Update()
+    private void Update()
     {
         MoveServerRpc();
     }
 
-    void OnDrawGizmos()
+    private void OnCollisionEnter(Collision collision)
     {
-        // Draw a wire sphere in the scene view for the explosion radius
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, explosionRadius);
+        if (IsServer)
+        {
+            Expload();
+        }
     }
 
     void Expload()
     {
-        if (!IsOwner) { return; }
+        if (!IsServer) { return; }  // Ensure only the server handles explosion and destruction
 
-        //Debug.Log("Projectile: Expload");
-        Collider[] _colliders = Physics.OverlapSphere(transform.position, explosionRadius);
-
-        foreach (Collider nearbyObject in _colliders)
+        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+        foreach (Collider nearbyObject in colliders)
         {
-            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
-            HealthController hc = nearbyObject.GetComponent<HealthController>();
-           
-            // ++ AddForce(rb);
-            DamageObject(hc, CalculateDamage(nearbyObject));
+            Rigidbody nearbyRb = nearbyObject.GetComponent<Rigidbody>();
+            HealthController healthController = nearbyObject.GetComponent<HealthController>();
+            
+            // Add force and apply damage if applicable
+            if (nearbyRb != null)
+            {
+                nearbyRb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+            }
+            if (healthController != null)
+            {
+                healthController.TakeDamage(CalculateDamage(nearbyObject));
+            }
         }
-        parent.DestroyServerRpc(GetComponent<NetworkObject>());
+
+        // Destroy the projectile through the parent ShootingController
+        if (parent != null)
+        {
+            parent.DestroyServerRpc(GetComponent<NetworkObject>());
+        }
+        else
+        {
+            Debug.LogWarning("Projectile has no parent ShootingController reference!");
+            GetComponent<NetworkObject>().Despawn(true); // Fallback if parent is missing
+        }
     }
 
-  
-    private float CalculateDamage(Collider target)
+    private int CalculateDamage(Collider target)
     {
         Vector3 closestPoint = target.ClosestPoint(transform.position);
-
         float distance = Vector3.Distance(transform.position, closestPoint);
-
         float damage = explosionDamage * (1 - (distance / explosionRadius));
-
-        //Debug.Log("Collided With:" + target.name + "Distance from explosion: " + distance + " Damage dealt: " + damage);
-
-        return Mathf.Max(damage, 0);
+        return Mathf.Max(Mathf.RoundToInt(damage), 0);
     }
 
-    void DamageObject(HealthController hp, float amountOfDamage)
+    // Draw the explosion radius for visualization in the editor
+    private void OnDrawGizmos()
     {
-        if (hp == null) { return; }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        Expload();
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void MoveServerRpc()
     {
-        if (!GetComponent<NetworkObject>().IsSpawned) { return; } 
-        
-        //rb.linearVelocity = transform.forward * shootForce;
-        rb.AddForce(transform.forward * shootForce, ForceMode.Impulse);
+        // Only the server should apply force/movement to avoid client desync
+        if (IsServer && GetComponent<NetworkObject>().IsSpawned)
+        {
+            rb.AddForce(transform.forward * shootForce, ForceMode.Impulse);
+        }
     }
-
-    
 }
