@@ -23,6 +23,11 @@ public class HealthController : NetworkBehaviour
         }
     }
 
+    public void GainHealth(int amount)
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     private void DieServerRpc()
     {

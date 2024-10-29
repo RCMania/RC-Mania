@@ -21,7 +21,6 @@ public class Projectile : NetworkBehaviour
         // Apply the shooting force if we are the server
         if (IsServer)
         {
-            rb.AddForce(transform.forward * shootForce, ForceMode.Impulse);
             Invoke(nameof(Expload), lifeTime);
         }
         else
@@ -84,13 +83,6 @@ public class Projectile : NetworkBehaviour
         return Mathf.Max(Mathf.RoundToInt(damage), 0);
     }
 
-    // Draw the explosion radius for visualization in the editor
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, explosionRadius);
-    }
-
     [ServerRpc(RequireOwnership = false)]
     private void MoveServerRpc()
     {
@@ -99,5 +91,12 @@ public class Projectile : NetworkBehaviour
         {
             rb.AddForce(transform.forward * shootForce, ForceMode.Impulse);
         }
+    }
+
+    // Draw the explosion radius for visualization in the editor
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
     }
 }

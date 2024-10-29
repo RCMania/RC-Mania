@@ -64,8 +64,7 @@ public class ShootingController : NetworkBehaviour
             // Ensure it is removed from the list before being destroyed
             spawnedProjectiles.Remove(projectileInstance);
 
-            // Despawn and destroy the projectile
-            projectileNetworkObject.Despawn(true);
+            //projectileNetworkObject.Despawn(true); //Despawn remove the objects but keeps it on the server (good if you want to revive the object).
             Destroy(projectileInstance);
         }
     }
