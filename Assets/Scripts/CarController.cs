@@ -14,8 +14,8 @@ public class CarController : NetworkBehaviour
     [Header("References")]
     [SerializeField] WheelCollider[] wheelColliders = new WheelCollider[4];
     [SerializeField] GameObject[] wheelMeshes = new GameObject[4];
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private GameObject centerOfMass;
+    [SerializeField] Rigidbody rb;
+    [SerializeField] GameObject centerOfMass;
 
     [Header("Car Settings")]
     [SerializeField] float wheelBase = 2.55f;
@@ -35,10 +35,14 @@ public class CarController : NetworkBehaviour
 
     [Header("Steer Settings")]
     [SerializeField] float baseTurnRadius = 7.5f;
-   
+    [SerializeField] float driftFactor = 1.0f;
+    [SerializeField] float driftFriction = 0.5f; // Adjust this for desired drift intensity
+    [SerializeField] float driftSmoothFactor = 0.7f;
+
 
     private float driveInput = 0f;
     private float steerInput = 0f;
+    private bool driftInput = false;
 
     private DriveSystem driveSystem;
     private SteerSystem steeringSystem;
@@ -54,7 +58,7 @@ public class CarController : NetworkBehaviour
         rb.centerOfMass = centerOfMass.transform.localPosition;
 
         // Initialize systems
-        driveSystem = new DriveSystem(driveType, wheelColliders, motorForce, brakeForce, rb);
+        driveSystem = new DriveSystem(driveType, wheelColliders, motorForce, brakeForce, rb, driftFactor, driftFriction, driftSmoothFactor);
         steeringSystem = new SteerSystem(wheelColliders, wheelBase, rearTrack, baseTurnRadius);
     }
 
@@ -77,6 +81,15 @@ public class CarController : NetworkBehaviour
     {
         driveInput = Input.GetAxis("Vertical");
         steerInput = Input.GetAxis("Horizontal");
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            driftInput = true;
+        }
+        else
+        {
+            driftInput= false;
+        }
     }
 
     public float GetKPH()
